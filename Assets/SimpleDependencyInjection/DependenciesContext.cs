@@ -8,20 +8,21 @@ namespace SimpleDependencyInjection
 {
     public abstract class DependenciesContext : MonoBehaviour
     {
-        protected DependenciesCollection dependencies = new DependenciesCollection();
-        private InjectablesCollection injectables;
+        protected DependenciesCollection dependenciesCollection = new DependenciesCollection();
+        private DependenciesProvider dependenciesProvider;
 
 
         private void Awake()
         {
+            DontDestroyOnLoad(gameObject);
             Setup();
 
-            injectables = new InjectablesCollection(dependencies);
+            dependenciesProvider = new DependenciesProvider(dependenciesCollection);
 
             var children = GetComponentsInChildren<MonoBehaviour>(true);
             foreach (var child in children)
             {
-                injectables.Inject(child);
+                dependenciesProvider.Inject(child);
             }
 
             Configure();

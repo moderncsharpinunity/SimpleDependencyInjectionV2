@@ -17,11 +17,11 @@ namespace Example
 
         protected override void Setup()
         {
-            dependencies.Add(new Dependency { Type = typeof(ExampleDependencyMonoBehaviour), Factory = DependencyFactory.FromGameObject(exampleDependency), IsSingleton = true });
+            dependenciesCollection.Add(new Dependency { Type = typeof(ExampleDependencyMonoBehaviour), Factory = DependencyFactory.FromGameObject(exampleDependency), IsSingleton = true });
 
-            dependencies.Add(new Dependency { Type = typeof(ExampleDependencyPlainClass), Factory = DependencyFactory.FromClass<ExampleDependencyPlainClass>(), IsSingleton = false });
+            dependenciesCollection.Add(new Dependency { Type = typeof(ExampleDependencyPlainClass), Factory = DependencyFactory.FromClass<ExampleDependencyPlainClass>(), IsSingleton = false });
 
-            dependencies.Add(new Dependency { Type = typeof(ExampleDependencyNested), Factory = DependencyFactory.FromPrefab(exampleDependencyNested), IsSingleton = true });
+            dependenciesCollection.Add(new Dependency { Type = typeof(ExampleDependencyNested), Factory = DependencyFactory.FromPrefab(exampleDependencyNested), IsSingleton = true });
         }
 
         protected override void Configure()

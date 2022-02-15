@@ -9,25 +9,25 @@ namespace SimpleDependencyInjection
 {
     public static class DependencyFactory
     {
-        public delegate object Delegate(InjectablesCollection injectables);
+        public delegate object Delegate(DependenciesProvider injectables);
 
         public static Delegate FromClass<T>() where T : class, new()
         {
-            return (injectables) =>
+            return (dependencies) =>
             {
-                return injectables.Inject(new T());
+                return dependencies.Inject(new T());
             };
         }
 
         public static Delegate FromPrefab<T>(T prefab) where T : MonoBehaviour
         {
-            return (injectables) =>
+            return (dependencies) =>
             {
                 var instance = GameObject.Instantiate(prefab);
                 var children = instance.GetComponentsInChildren<MonoBehaviour>(true);
                 foreach (var child in children)
                 {
-                    injectables.Inject(child);
+                    dependencies.Inject(child);
                 }
                 return instance.GetComponent<T>();
             };
@@ -35,15 +35,16 @@ namespace SimpleDependencyInjection
 
         public static Delegate FromGameObject<T>(T instance) where T : MonoBehaviour
         {
-            return (injectables) =>
+            return (dependencies) =>
             {
                 var children = instance.GetComponentsInChildren<MonoBehaviour>(true);
                 foreach (var child in children)
                 {
-                    injectables.Inject(child);
+                    dependencies.Inject(child);
                 }
                 return instance;
             };
         }
+        
     }
 }

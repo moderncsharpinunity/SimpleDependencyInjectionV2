@@ -8,41 +8,46 @@ using System.Threading.Tasks;
 
 namespace SimpleDependencyInjection
 {
-    public class InjectablesCollection
+    public class DependenciesProvider
     {
-        private Dictionary<Type, Injectable> injectables = new Dictionary<Type, Injectable>();
+        private Dictionary<Type, Dependency> dependencies = new Dictionary<Type, Dependency>();
+        private Dictionary<Type, object> singletons = new Dictionary<Type, object>();
 
-        public InjectablesCollection(DependenciesCollection dependencies)
+        public DependenciesProvider(DependenciesCollection dependencies)
         {
             foreach (var dependency in dependencies)
             {
-                injectables.Add(dependency.Type, new Injectable { Factory = dependency.Factory, IsSingleton = dependency.IsSingleton });
+                this.dependencies.Add(dependency.Type, dependency);
             }
         }
 
         public object Get(Type type)
         {
-            if (!injectables.ContainsKey(type))
+            if (!dependencies.ContainsKey(type))
             {
-                throw new ArgumentException("Type not injectable: " + type.FullName);
+                throw new ArgumentException("Type is not a dependency: " + type.FullName);
             }
 
-            var injectable = injectables[type];
-            if (injectable.IsSingleton)
+            var dependency = dependencies[type];
+            if (dependency.IsSingleton)
             {
-                if (injectable.Instance == null)
+                if (!singletons.ContainsKey(type))
                 {
-                    injectable.Instance = injectable.Factory(this);
-                    injectables[type] = injectable;
+                    singletons.Add(type, dependency.Factory(this));
                 }
-                return injectable.Instance;
+                return singletons[type];
             }
             else
             {
-                return injectable.Factory(this);
+                return dependency.Factory(this);
             }
         }
 
+        public T Get<T>()
+        {
+            return (T)Get(typeof(T));
+        }
+        
         public object Inject(object dependant)
         {
             Type type = dependant.GetType();
