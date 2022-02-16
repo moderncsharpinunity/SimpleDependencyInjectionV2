@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SimpleDependencyInjection
 {
-    class InjectFieldAttribute : Attribute
+    public class InjectFieldAttribute : Attribute
     {
     }
 }
