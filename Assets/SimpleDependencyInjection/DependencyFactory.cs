@@ -10,7 +10,7 @@ namespace SimpleDependencyInjection
 {
     public static class DependencyFactory
     {
-        public delegate object Delegate(DependenciesProvider injectables);
+        public delegate object Delegate(DependenciesProvider dependencies);
 
         public static Delegate FromClass<T>() where T : class, new()
         {
@@ -21,12 +21,7 @@ namespace SimpleDependencyInjection
 
                 dependencies.Inject(obj);
 
-                var defaultConstructor = type.GetConstructor(Type.EmptyTypes);
-                if (defaultConstructor == null) 
-                {
-                    throw new InvalidOperationException("Cannot inject class without parameterless constructor");
-                }
-                defaultConstructor.Invoke(obj, null);
+                type.GetConstructor(Type.EmptyTypes).Invoke(obj, null);
 
                 return (T)obj;
             };
