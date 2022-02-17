@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace SimpleDependencyInjection
 {
+    [DefaultExecutionOrder(-1)]
     public abstract class DependenciesContext : MonoBehaviour
     {
         protected DependenciesCollection dependenciesCollection = new DependenciesCollection();

@@ -12,7 +12,7 @@ namespace Example
         [InjectField]
         private ExampleDependencyPlainClass dependency2 = null;
 
-        void Start()
+        void Awake()
         {
             dependency.DoSomethingComplex();
 

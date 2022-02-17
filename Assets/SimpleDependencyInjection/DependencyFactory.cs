@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using System.Runtime.Serialization;
 
 namespace SimpleDependencyInjection
 {
@@ -15,7 +16,19 @@ namespace SimpleDependencyInjection
         {
             return (dependencies) =>
             {
-                return dependencies.Inject(new T());
+                var type = typeof(T);
+                var obj = FormatterServices.GetUninitializedObject(type);
+
+                dependencies.Inject(obj);
+
+                var defaultConstructor = type.GetConstructor(Type.EmptyTypes);
+                if (defaultConstructor == null) 
+                {
+                    throw new InvalidOperationException("Cannot inject class without parameterless constructor");
+                }
+                defaultConstructor.Invoke(obj, null);
+
+                return (T)obj;
             };
         }
 
@@ -23,12 +36,16 @@ namespace SimpleDependencyInjection
         {
             return (dependencies) =>
             {
+                bool wasActive = prefab.gameObject.activeSelf;
+                prefab.gameObject.SetActive(false);
                 var instance = GameObject.Instantiate(prefab);
+                prefab.gameObject.SetActive(wasActive);
                 var children = instance.GetComponentsInChildren<MonoBehaviour>(true);
                 foreach (var child in children)
                 {
                     dependencies.Inject(child);
                 }
+                instance.gameObject.SetActive(wasActive);
                 return instance.GetComponent<T>();
             };
         }
